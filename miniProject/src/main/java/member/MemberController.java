@@ -3,7 +3,6 @@ package member;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class MemberController {
 	MemberService memberService = new MemberService();
@@ -12,10 +11,10 @@ public class MemberController {
 		super();
 	}
 
-	public String list(HttpServletRequest request, HttpServletResponse response) {
-		List<MemberVO> list = memberService.list();
-		request.setAttribute("list", list);
-		return "list";
+	public String list(HttpServletRequest request, MemberVO memberVO) {
+		List<MemberVO> list = memberService.list(memberVO);
+		request.setAttribute("memberList", list);
+		return "memberList";
 	}
 
 }

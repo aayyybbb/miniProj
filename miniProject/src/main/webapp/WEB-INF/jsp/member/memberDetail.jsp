@@ -20,7 +20,7 @@
 </head>
 <body>
     <h1>
-        view 임시 화면
+       마이페이지
     </h1>
    
       <label>아이디 : ${member.id}</label> <br/>

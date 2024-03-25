@@ -7,6 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+게시물 목록
+<ul>
+	<li><a href="">작성하기</a></li>
+	<li><a href="">돌아가기</a></li>
+</ul>
 </body>
 </html>

@@ -12,6 +12,7 @@ public class MemberDAO {
 
 	private static Connection conn = null;
 	private static PreparedStatement memberListPstmt = null;
+	private static PreparedStatement memberListPstmt2 = null;
 	private static PreparedStatement memberInsertPstmt = null;
 	private static PreparedStatement memberDeletePstmt = null;
 	private static PreparedStatement memberUpdatePstmt = null;
@@ -25,6 +26,7 @@ public class MemberDAO {
 			conn.setAutoCommit(false);
 
 			memberListPstmt = conn.prepareStatement("select * from tb_member");
+			memberListPstmt2 = conn.prepareStatement("select * from tb_member where name like ?");
 			memberInsertPstmt = conn.prepareStatement(
 					"insert into tb_member (id, pwd, name, addr, phone, gender) values (?, ?, ?, ?, ?, ?)");
 			memberDetailPstmt = conn.prepareStatement(
@@ -38,11 +40,18 @@ public class MemberDAO {
 		}
 	}
 
-	public List<MemberVO> list() {
+	public List<MemberVO> list(MemberVO member) {
 
 		List<MemberVO> list = new ArrayList<>();
 		try {
-			ResultSet rs = memberListPstmt.executeQuery();
+			ResultSet rs = null;
+			if (member != null && !member.isEmptySearchKey()) {
+				// 검색 키워드 설정
+				memberListPstmt2.setString(1, "%" + member.getSearchKey() + "%");
+				rs = memberListPstmt2.executeQuery();
+			} else {
+				rs = memberListPstmt.executeQuery();
+			}
 			while (rs.next()) {
 				MemberVO memberVO = new MemberVO(rs.getString("id"), rs.getString("pwd"), rs.getString("name"),
 						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"));

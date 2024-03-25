@@ -36,7 +36,7 @@
 <body>
 	<h1>회원 목록</h1>
 	  
-    <form id="searchForm" action="boards" method="post" >
+    <form id="searchForm" action="member.do" method="post" >
     	<input type="hidden" id="action" name="action" value="list">
     	<label>제목</label>
     	<input type="text" id="searchKey" name="searchKey" value="${param.searchKey}">
@@ -55,7 +55,7 @@
             <th>연락처</th>
             <th>성별</th>
         </tr>
-        <c:forEach var="member" items="${list}">
+        <c:forEach var="member" items="${memberList}">
         <tr>
             <td onclick="jsView('${member.id}')"  style="cursor:pointer;">${member.id}</td>
             <td><a href="member.do?action=view&id=${member.id}">${member.name}</a></td>

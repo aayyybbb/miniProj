@@ -7,6 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+회원정보 수정 페이지
+<ul>
+	<li><a href="">수정하기</a></li>
+	<li><a href="">돌아가기</a></li>
+</ul>
 </body>
 </html>
