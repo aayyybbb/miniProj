@@ -62,7 +62,7 @@ public class MemberDAO {
 			ResultSet rs = memberDetailPstmt.executeQuery();
 			if (rs.next()) {
 				member = new MemberVO(rs.getString("id"), rs.getString("pwd"), rs.getString("name"),
-						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"));
+						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"), rs.getString("hobbies"));
 			}
 			rs.close();
 		} catch (Exception e) {

@@ -58,7 +58,7 @@
         <c:forEach var="member" items="${list}">
         <tr>
             <td onclick="jsView('${member.id}')"  style="cursor:pointer;">${member.id}</td>
-            <td><a href="boards?action=view&id=${member.id}">${member.name}</a></td>
+            <td><a href="member.do?action=view&id=${member.id}">${member.name}</a></td>
             <td>${member.phone}</td>
             <td>${member.gender}</td>
         </tr>

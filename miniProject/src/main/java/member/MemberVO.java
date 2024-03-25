@@ -15,4 +15,16 @@ public class MemberVO {
 	private String addr;
 	private String phone;
 	private String gender;
+
+	private String hobbies;
+
+	public MemberVO(String id, String pwd, String name, String addr, String phone, String gender) {
+		super();
+		this.id = id;
+		this.pwd = pwd;
+		this.name = name;
+		this.addr = addr;
+		this.phone = phone;
+		this.gender = gender;
+	}
 }

@@ -17,4 +17,5 @@ public class MemberController {
 		request.setAttribute("list", list);
 		return "list";
 	}
+
 }
