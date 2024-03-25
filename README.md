@@ -3,7 +3,7 @@
 
 ----
 ### [DB 설계]
-![image](https://github.com/G-Valley-Feelog/New_Code/assets/129162938/b500da63-8bd3-4548-9546-7e0d3f54c1e3)
+![image](https://github.com/G-Valley-Feelog/New_Code/assets/129162938/b500da63-8bd3-4548-9546-7e0d3f54c1e3](https://github.com/aayyybbb/miniProj/blob/master/miniProject.png)
 
 -----
 ### [필요한 페이지] ###
