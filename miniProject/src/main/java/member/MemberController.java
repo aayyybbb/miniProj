@@ -17,4 +17,10 @@ public class MemberController {
 		return "memberList";
 	}
 
+	public String read(HttpServletRequest request, MemberVO memberVO) {
+		MemberVO member = memberService.read(memberVO);
+		request.setAttribute("memberDetail", member);
+		return "memberDetail";
+	}
+
 }

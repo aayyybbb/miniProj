@@ -84,6 +84,7 @@ public class MemberServlet extends HttpServlet {
 		String action = memberVO.getAction();
 		String result = switch (action) {
 		case "list" -> memberController.list(request, memberVO);
+		case "view" -> memberController.read(request, memberVO);
 		default -> "";
 		};
 

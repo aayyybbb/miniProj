@@ -66,6 +66,7 @@ public class MemberDAO {
 
 	public MemberVO read(MemberVO memberVO) {
 		MemberVO member = null;
+		System.out.println("데이터 가져오기");
 		try {
 			memberDetailPstmt.setString(1, memberVO.getId());
 			ResultSet rs = memberDetailPstmt.executeQuery();
@@ -77,6 +78,7 @@ public class MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(member);
 		return member;
 	}
 }

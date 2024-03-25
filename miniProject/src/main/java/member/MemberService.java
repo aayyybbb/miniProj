@@ -10,4 +10,9 @@ public class MemberService {
 		return list;
 	}
 
+	public MemberVO read(MemberVO member) {
+		MemberVO memberVO = memberDAO.read(member);
+		return memberVO;
+	}
+
 }
