@@ -1,8 +1,8 @@
 package member;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,8 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Servlet implementation class BoardServlet
@@ -50,41 +48,64 @@ public class MemberServlet extends HttpServlet {
 		doService(request, response);
 	}
 
-	private Map<String, Object> convertMap(Map<String, String[]> map) {
-		Map<String, Object> result = new HashMap<>();
-
-		for (var entry : map.entrySet()) {
-			if (entry.getValue().length == 1) {
-				// 문자열 1건
-				result.put(entry.getKey(), entry.getValue()[0]);
-			} else {
-				// 문자열 배열을 추가한다
-				result.put(entry.getKey(), entry.getValue());
-			}
-		}
-
-		return result;
-	}
+//	private Map<String, Object> convertMap(Map<String, String[]> map) {
+//		Map<String, Object> result = new HashMap<>();
+//
+//		for (var entry : map.entrySet()) {
+//			if (entry.getValue().length == 1) {
+//				// 문자열 1건
+//				result.put(entry.getKey(), entry.getValue()[0]);
+//			} else {
+//				// 문자열 배열을 추가한다
+//				result.put(entry.getKey(), entry.getValue());
+//			}
+//		}
+//
+//		return result;
+//	}
 
 	private void doService(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
-		String contentType = request.getContentType();
+		List<String> list = new ArrayList<>();
+//		String contentType = request.getContentType();
+//
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		MemberVO memberVO = null;
+//		if (contentType == null || contentType.startsWith("application/x-www-form-urlencoded")) {
+//			memberVO = objectMapper.convertValue(convertMap(request.getParameterMap()), MemberVO.class);
+//		} else if (contentType.startsWith("application/json")) {
+//			memberVO = objectMapper.readValue(request.getInputStream(), MemberVO.class);
+//		}
+		MemberVO memberVO = new MemberVO();
+		memberVO.setId(request.getParameter("id"));
+		memberVO.setPwd(request.getParameter("pwd"));
+		memberVO.setName(request.getParameter("name"));
+		memberVO.setAddr(request.getParameter("addr"));
+		memberVO.setPhone(request.getParameter("phone"));
+		memberVO.setGender(request.getParameter("gender"));
+		memberVO.setAction(request.getParameter("action"));
+		memberVO.setSearchKey(request.getParameter("searchKey"));
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		MemberVO memberVO = null;
-		if (contentType == null || contentType.startsWith("application/x-www-form-urlencoded")) {
-			memberVO = objectMapper.convertValue(convertMap(request.getParameterMap()), MemberVO.class);
-		} else if (contentType.startsWith("application/json")) {
-			memberVO = objectMapper.readValue(request.getInputStream(), MemberVO.class);
+		String[] hList = request.getParameterValues("hobby");
+		if (hList != null) {
+			for (String h : hList) {
+				list.add(h);
+			}
 		}
+
+		memberVO.setHobbies(list);
+
 		System.out.println("memberVO " + memberVO);
 
 		String action = memberVO.getAction();
 		String result = switch (action) {
 		case "list" -> memberController.list(request, memberVO);
 		case "view" -> memberController.read(request, memberVO);
+		case "signUp" -> memberController.signUp(request);
+		case "insert" -> memberController.insert(request, memberVO);
+		case "update" -> memberController.update(request, memberVO);
 		default -> "";
 		};
 

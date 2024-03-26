@@ -11,8 +11,15 @@ public class MemberService {
 	}
 
 	public MemberVO read(MemberVO member) {
-		MemberVO memberVO = memberDAO.read(member);
-		return memberVO;
+		return memberDAO.read(member);
+	}
+
+	public int insert(MemberVO memberVO) {
+		return memberDAO.insert(memberVO);
+	}
+
+	public int update(MemberVO memberVO) {
+		return memberDAO.update(memberVO);
 	}
 
 }

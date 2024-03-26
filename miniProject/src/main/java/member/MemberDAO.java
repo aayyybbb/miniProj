@@ -17,6 +17,8 @@ public class MemberDAO {
 	private static PreparedStatement memberDeletePstmt = null;
 	private static PreparedStatement memberUpdatePstmt = null;
 	private static PreparedStatement memberDetailPstmt = null;
+	private static PreparedStatement hobbyInsertPstmt = null;
+	private static PreparedStatement hobbyDeletePstmt = null;
 
 	static {
 		try {
@@ -28,12 +30,14 @@ public class MemberDAO {
 			memberListPstmt = conn.prepareStatement("select * from tb_member");
 			memberListPstmt2 = conn.prepareStatement("select * from tb_member where name like ?");
 			memberInsertPstmt = conn.prepareStatement(
-					"insert into tb_member (id, pwd, name, addr, phone, gender) values (?, ?, ?, ?, ?, ?)");
+					"insert into tb_member (member_id, pwd, name, addr, phone, gender) values (?, ?, ?, ?, ?, ?)");
 			memberDetailPstmt = conn.prepareStatement(
-					"SELECT m.*, GROUP_CONCAT(h.hobby) AS hobbies FROM tb_member m INNER JOIN tb_member_hobby mh ON m.id = mh.member_id INNER JOIN tb_hobby h ON mh.hobby_id = h.id WHERE m.id = ? GROUP BY m.id");
-			memberDeletePstmt = conn.prepareStatement("delete from tb_member where id = ?");
+					"select m.*, group_concat(h.hobby) as hobbies from tb_member m inner join tb_member_hobby mh on m.member_id = mh.member_id inner join tb_hobby h on mh.hobby_id = h.hobby_id where m.member_id = ? group by  m.member_id");
+			memberDeletePstmt = conn.prepareStatement("delete from tb_member where member_id = ?");
 			memberUpdatePstmt = conn.prepareStatement(
-					"update tb_member set id = ?, pwd = ?, name = ?, addr = ?, phone = ?, gender = ?");
+					"update tb_member pwd = ?, name = ?, addr = ?, phone = ?, gender = ? where member_id = ?");
+			hobbyInsertPstmt = conn.prepareStatement("insert into tb_member_hobby (member_id, hobby_id) values(?, ?)");
+			hobbyDeletePstmt = conn.prepareStatement("delete from tb_member_hobby where member_id = ?");
 
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -53,7 +57,7 @@ public class MemberDAO {
 				rs = memberListPstmt.executeQuery();
 			}
 			while (rs.next()) {
-				MemberVO memberVO = new MemberVO(rs.getString("id"), rs.getString("pwd"), rs.getString("name"),
+				MemberVO memberVO = new MemberVO(rs.getString("member_id"), rs.getString("pwd"), rs.getString("name"),
 						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"));
 				list.add(memberVO);
 			}
@@ -71,7 +75,7 @@ public class MemberDAO {
 			memberDetailPstmt.setString(1, memberVO.getId());
 			ResultSet rs = memberDetailPstmt.executeQuery();
 			if (rs.next()) {
-				member = new MemberVO(rs.getString("id"), rs.getString("pwd"), rs.getString("name"),
+				member = new MemberVO(rs.getString("member_id"), rs.getString("pwd"), rs.getString("name"),
 						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"), rs.getString("hobbies"));
 			}
 			rs.close();
@@ -80,5 +84,67 @@ public class MemberDAO {
 		}
 		System.out.println(member);
 		return member;
+	}
+
+	public int delete(MemberVO memberVO) {
+		int updated = 0;
+		try {
+			memberDeletePstmt.setString(1, memberVO.getId());
+			updated = memberDeletePstmt.executeUpdate();
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return updated;
+	}
+
+	public int update(MemberVO memberVO) {
+		int updated = 0;
+		try {
+			memberUpdatePstmt.setString(1, memberVO.getId());
+			memberUpdatePstmt.setString(2, memberVO.getPwd());
+			memberUpdatePstmt.setString(3, memberVO.getName());
+			memberUpdatePstmt.setString(4, memberVO.getAddr());
+			memberUpdatePstmt.setString(5, memberVO.getPhone());
+			memberUpdatePstmt.setString(6, memberVO.getGender());
+			hobbyDeletePstmt.setString(1, memberVO.getId());
+			updated = memberUpdatePstmt.executeUpdate();
+			conn.commit();
+
+			for (String hobby : memberVO.getHobbies()) {
+				hobbyInsertPstmt.setString(1, memberVO.getId());
+				hobbyInsertPstmt.setString(2, hobby);
+				hobbyInsertPstmt.executeUpdate();
+			}
+			updated = memberUpdatePstmt.executeUpdate();
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return updated;
+
+	}
+
+	public int insert(MemberVO memberVO) {
+		int updated = 0;
+		try {
+			memberInsertPstmt.setString(1, memberVO.getId());
+			memberInsertPstmt.setString(2, memberVO.getPwd());
+			memberInsertPstmt.setString(3, memberVO.getName());
+			memberInsertPstmt.setString(4, memberVO.getAddr());
+			memberInsertPstmt.setString(5, memberVO.getPhone());
+			memberInsertPstmt.setString(6, memberVO.getGender());
+			updated = memberInsertPstmt.executeUpdate();
+
+			for (String hobby : memberVO.getHobbies()) {
+				hobbyInsertPstmt.setString(1, memberVO.getId());
+				hobbyInsertPstmt.setString(2, hobby);
+				hobbyInsertPstmt.executeUpdate();
+			}
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return updated;
 	}
 }

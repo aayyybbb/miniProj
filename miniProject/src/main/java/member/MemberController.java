@@ -23,4 +23,26 @@ public class MemberController {
 		return "memberDetail";
 	}
 
+	public String signUp(HttpServletRequest request) {
+		return "signUp";
+	}
+
+	public String insert(HttpServletRequest request, MemberVO memberVO) {
+		int updated = memberService.insert(memberVO);
+		if (updated != 0) {
+			return "memberList";
+		} else {
+			return "signUp";
+		}
+	}
+
+	public String update(HttpServletRequest request, MemberVO memberVO) {
+		int updated = memberService.update(memberVO);
+		if (updated != 0) {
+			request.setAttribute("memberDetail", memberVO);
+			return "memberDetail";
+		}
+		return "memberUpdate";
+	}
+
 }
