@@ -26,14 +26,11 @@
     <input type="checkbox" id="hobby4" name="hobby" value="4"> <label for="hobby4">Painting</label><br>
     <input type="checkbox" id="hobby5" name="hobby" value="5"> <label for="hobby5">Gardening</label><br>
   <div>
-        <input type="submit" value="등록">
-        <input type="button" value="취소" onclick="member.do?action=list">
+        <input type="submit" value="회원가입">
+        <input type="button" value="돌아가기" onclick="member.do?action=list">
     </div>
 </form>
-<ul>
-	<li><a href="">회원가입</a></li>
-	<li><a href="">돌아가기</a></li>
-</ul>
+
 <script>
 
 </script>

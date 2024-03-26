@@ -22,4 +22,8 @@ public class MemberService {
 		return memberDAO.update(memberVO);
 	}
 
+	public int delete(MemberVO memberVO) {
+		return memberDAO.delete(memberVO);
+	}
+
 }

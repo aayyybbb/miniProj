@@ -45,4 +45,20 @@ public class MemberController {
 		return "memberUpdate";
 	}
 
+	public String delete(HttpServletRequest request, MemberVO memberVO) {
+		int updated = memberService.delete(memberVO);
+		if (updated != 0) {
+			return "memberList";
+		} else {
+			request.setAttribute("memberUpdate", memberVO);
+			return "memberUpdate";
+		}
+	}
+
+	public String updateForm(HttpServletRequest request, MemberVO memberVO) {
+		MemberVO member = memberService.read(memberVO);
+		request.setAttribute("memberUpdate", member);
+		return "memberUpdate";
+	}
+
 }

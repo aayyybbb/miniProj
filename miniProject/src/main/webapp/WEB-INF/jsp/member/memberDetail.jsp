@@ -35,11 +35,11 @@
 function jsDelete() {
 	if (confirm("정말로 삭제하시겠습니까?")) {
 		action.value = "delete";
-		myFetch("board.do", "viewForm", json => {
+		myFetch("member.do", "viewForm", json => {
 			if(json.status == 0) {
 				//성공
 				alert("회원정보를 삭제 하였습니다");
-				location = "board.do?action=list";
+				location = "member.do?action=list";
 			} else {
 				alert(json.statusMessage);
 			}
@@ -61,7 +61,7 @@ function jsUpdateForm() {
 <!-- 두개의 폼을 하나로 합치는 방법 , js를 사용하여 처리  -->
 	<form id="viewForm" method="post" action="member.do">
 		<input type="hidden" id="action" name="action" value="">
-		<input type="hidden" id="id" name="id" value="${member.id}">
+		<input type="hidden" id="id" name="id" value="${memberDetail.id}">
 		<input type="button" value="삭제" onclick="jsDelete()">
 		<input type="button" value="수정" onclick="jsUpdateForm()">
 	</form>     

@@ -19,6 +19,7 @@ public class MemberDAO {
 	private static PreparedStatement memberDetailPstmt = null;
 	private static PreparedStatement hobbyInsertPstmt = null;
 	private static PreparedStatement hobbyDeletePstmt = null;
+	private static PreparedStatement memberDetailWithOutHobbyPstmt = null;
 
 	static {
 		try {
@@ -35,9 +36,10 @@ public class MemberDAO {
 					"select m.*, group_concat(h.hobby) as hobbies from tb_member m inner join tb_member_hobby mh on m.member_id = mh.member_id inner join tb_hobby h on mh.hobby_id = h.hobby_id where m.member_id = ? group by  m.member_id");
 			memberDeletePstmt = conn.prepareStatement("delete from tb_member where member_id = ?");
 			memberUpdatePstmt = conn.prepareStatement(
-					"update tb_member pwd = ?, name = ?, addr = ?, phone = ?, gender = ? where member_id = ?");
+					"update tb_member set pwd = ?, name = ?, addr = ?, phone = ?, gender = ? where member_id = ?");
 			hobbyInsertPstmt = conn.prepareStatement("insert into tb_member_hobby (member_id, hobby_id) values(?, ?)");
 			hobbyDeletePstmt = conn.prepareStatement("delete from tb_member_hobby where member_id = ?");
+			memberDetailWithOutHobbyPstmt = conn.prepareStatement("select * from tb_member where member_id = ?");
 
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -70,13 +72,21 @@ public class MemberDAO {
 
 	public MemberVO read(MemberVO memberVO) {
 		MemberVO member = null;
+		ResultSet rs = null;
 		System.out.println("데이터 가져오기");
 		try {
 			memberDetailPstmt.setString(1, memberVO.getId());
-			ResultSet rs = memberDetailPstmt.executeQuery();
+			rs = memberDetailPstmt.executeQuery();
 			if (rs.next()) {
 				member = new MemberVO(rs.getString("member_id"), rs.getString("pwd"), rs.getString("name"),
 						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"), rs.getString("hobbies"));
+			} else {
+				memberDetailWithOutHobbyPstmt.setString(1, memberVO.getId());
+				rs = memberDetailWithOutHobbyPstmt.executeQuery();
+				if (rs.next()) {
+					member = new MemberVO(rs.getString("member_id"), rs.getString("pwd"), rs.getString("name"),
+							rs.getString("addr"), rs.getString("phone"), rs.getString("gender"));
+				}
 			}
 			rs.close();
 		} catch (Exception e) {
@@ -100,33 +110,43 @@ public class MemberDAO {
 
 	public int update(MemberVO memberVO) {
 		int updated = 0;
+		int memberUpdated = 0;
+		int hobbyUpdated = 0;
 		try {
-			memberUpdatePstmt.setString(1, memberVO.getId());
-			memberUpdatePstmt.setString(2, memberVO.getPwd());
-			memberUpdatePstmt.setString(3, memberVO.getName());
-			memberUpdatePstmt.setString(4, memberVO.getAddr());
-			memberUpdatePstmt.setString(5, memberVO.getPhone());
-			memberUpdatePstmt.setString(6, memberVO.getGender());
+			memberUpdatePstmt.setString(1, memberVO.getPwd());
+			memberUpdatePstmt.setString(2, memberVO.getName());
+			memberUpdatePstmt.setString(3, memberVO.getAddr());
+			memberUpdatePstmt.setString(4, memberVO.getPhone());
+			memberUpdatePstmt.setString(5, memberVO.getGender());
+			memberUpdatePstmt.setString(6, memberVO.getId());
 			hobbyDeletePstmt.setString(1, memberVO.getId());
-			updated = memberUpdatePstmt.executeUpdate();
+			hobbyDeletePstmt.executeUpdate();
+			memberUpdated = memberUpdatePstmt.executeUpdate();
 			conn.commit();
+			System.out.println(hobbyUpdated);
+			System.out.println(memberUpdated);
 
 			for (String hobby : memberVO.getHobbies()) {
 				hobbyInsertPstmt.setString(1, memberVO.getId());
 				hobbyInsertPstmt.setString(2, hobby);
 				hobbyInsertPstmt.executeUpdate();
 			}
-			updated = memberUpdatePstmt.executeUpdate();
 			conn.commit();
+			hobbyUpdated = 1;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (memberUpdated != 0 && hobbyUpdated != 0) {
+			updated = 1;
+		}
 		return updated;
-
 	}
 
 	public int insert(MemberVO memberVO) {
 		int updated = 0;
+		int memberUpdated = 0;
+		int hobbyUpdated = 0;
 		try {
 			memberInsertPstmt.setString(1, memberVO.getId());
 			memberInsertPstmt.setString(2, memberVO.getPwd());
@@ -134,16 +154,19 @@ public class MemberDAO {
 			memberInsertPstmt.setString(4, memberVO.getAddr());
 			memberInsertPstmt.setString(5, memberVO.getPhone());
 			memberInsertPstmt.setString(6, memberVO.getGender());
-			updated = memberInsertPstmt.executeUpdate();
+			memberUpdated = memberInsertPstmt.executeUpdate();
 
 			for (String hobby : memberVO.getHobbies()) {
 				hobbyInsertPstmt.setString(1, memberVO.getId());
 				hobbyInsertPstmt.setString(2, hobby);
-				hobbyInsertPstmt.executeUpdate();
+				hobbyUpdated = hobbyInsertPstmt.executeUpdate();
 			}
 			conn.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if (memberUpdated != 0 && hobbyUpdated != 0) {
+			updated = 1;
 		}
 		return updated;
 	}
