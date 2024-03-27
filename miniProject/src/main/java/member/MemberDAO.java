@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import hobby.HobbyDAO;
+import hobby.HobbyVO;
+
 public class MemberDAO {
 
 	private static Connection conn = null;
@@ -17,9 +20,8 @@ public class MemberDAO {
 	private static PreparedStatement memberDeletePstmt = null;
 	private static PreparedStatement memberUpdatePstmt = null;
 	private static PreparedStatement memberDetailPstmt = null;
-	private static PreparedStatement hobbyInsertPstmt = null;
-	private static PreparedStatement hobbyDeletePstmt = null;
 	private static PreparedStatement memberDetailWithOutHobbyPstmt = null;
+	HobbyDAO hobbyDAO = new HobbyDAO();
 
 	static {
 		try {
@@ -37,8 +39,6 @@ public class MemberDAO {
 			memberDeletePstmt = conn.prepareStatement("delete from tb_member where member_id = ?");
 			memberUpdatePstmt = conn.prepareStatement(
 					"update tb_member set pwd = ?, name = ?, addr = ?, phone = ?, gender = ? where member_id = ?");
-			hobbyInsertPstmt = conn.prepareStatement("insert into tb_member_hobby (member_id, hobby_id) values(?, ?)");
-			hobbyDeletePstmt = conn.prepareStatement("delete from tb_member_hobby where member_id = ?");
 			memberDetailWithOutHobbyPstmt = conn.prepareStatement("select * from tb_member where member_id = ?");
 
 		} catch (ClassNotFoundException | SQLException e) {
@@ -77,9 +77,11 @@ public class MemberDAO {
 		try {
 			memberDetailPstmt.setString(1, memberVO.getId());
 			rs = memberDetailPstmt.executeQuery();
-			if (rs.next()) {
+			if (rs.next() && rs.getString("hobbies") != null) {
+				HobbyVO hobby = new HobbyVO();
+				hobby.setHobby(rs.getString("hobbies"));
 				member = new MemberVO(rs.getString("member_id"), rs.getString("pwd"), rs.getString("name"),
-						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"), rs.getString("hobbies"));
+						rs.getString("addr"), rs.getString("phone"), rs.getString("gender"), hobby);
 			} else {
 				memberDetailWithOutHobbyPstmt.setString(1, memberVO.getId());
 				rs = memberDetailWithOutHobbyPstmt.executeQuery();
@@ -110,8 +112,6 @@ public class MemberDAO {
 
 	public int update(MemberVO memberVO) {
 		int updated = 0;
-		int memberUpdated = 0;
-		int hobbyUpdated = 0;
 		try {
 			memberUpdatePstmt.setString(1, memberVO.getPwd());
 			memberUpdatePstmt.setString(2, memberVO.getName());
@@ -119,34 +119,17 @@ public class MemberDAO {
 			memberUpdatePstmt.setString(4, memberVO.getPhone());
 			memberUpdatePstmt.setString(5, memberVO.getGender());
 			memberUpdatePstmt.setString(6, memberVO.getId());
-			hobbyDeletePstmt.setString(1, memberVO.getId());
-			hobbyDeletePstmt.executeUpdate();
-			memberUpdated = memberUpdatePstmt.executeUpdate();
+			updated = memberUpdatePstmt.executeUpdate();
 			conn.commit();
-			System.out.println(hobbyUpdated);
-			System.out.println(memberUpdated);
-
-			for (String hobby : memberVO.getHobbies()) {
-				hobbyInsertPstmt.setString(1, memberVO.getId());
-				hobbyInsertPstmt.setString(2, hobby);
-				hobbyInsertPstmt.executeUpdate();
-			}
-			conn.commit();
-			hobbyUpdated = 1;
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		if (memberUpdated != 0 && hobbyUpdated != 0) {
-			updated = 1;
 		}
 		return updated;
 	}
 
 	public int insert(MemberVO memberVO) {
 		int updated = 0;
-		int memberUpdated = 0;
-		int hobbyUpdated = 0;
 		try {
 			memberInsertPstmt.setString(1, memberVO.getId());
 			memberInsertPstmt.setString(2, memberVO.getPwd());
@@ -154,19 +137,10 @@ public class MemberDAO {
 			memberInsertPstmt.setString(4, memberVO.getAddr());
 			memberInsertPstmt.setString(5, memberVO.getPhone());
 			memberInsertPstmt.setString(6, memberVO.getGender());
-			memberUpdated = memberInsertPstmt.executeUpdate();
-
-			for (String hobby : memberVO.getHobbies()) {
-				hobbyInsertPstmt.setString(1, memberVO.getId());
-				hobbyInsertPstmt.setString(2, hobby);
-				hobbyUpdated = hobbyInsertPstmt.executeUpdate();
-			}
+			updated = memberInsertPstmt.executeUpdate();
 			conn.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		if (memberUpdated != 0 && hobbyUpdated != 0) {
-			updated = 1;
 		}
 		return updated;
 	}

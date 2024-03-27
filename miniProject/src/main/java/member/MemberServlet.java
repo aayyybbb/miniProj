@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import hobby.HobbyVO;
+
 /**
  * Servlet implementation class BoardServlet
  */
@@ -66,19 +68,13 @@ public class MemberServlet extends HttpServlet {
 
 	private void doService(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
 		request.setCharacterEncoding("utf-8");
 		List<String> list = new ArrayList<>();
-//		String contentType = request.getContentType();
-//
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		MemberVO memberVO = null;
-//		if (contentType == null || contentType.startsWith("application/x-www-form-urlencoded")) {
-//			memberVO = objectMapper.convertValue(convertMap(request.getParameterMap()), MemberVO.class);
-//		} else if (contentType.startsWith("application/json")) {
-//			memberVO = objectMapper.readValue(request.getInputStream(), MemberVO.class);
-//		}
+
 		MemberVO memberVO = new MemberVO();
+		HobbyVO hobbyVO = new HobbyVO();
+
 		memberVO.setId(request.getParameter("id"));
 		memberVO.setPwd(request.getParameter("pwd"));
 		memberVO.setName(request.getParameter("name"));
@@ -95,9 +91,11 @@ public class MemberServlet extends HttpServlet {
 			}
 		}
 
-		memberVO.setHobbies(list);
+		hobbyVO.setHobbyId(list);
+		memberVO.setHobbyVO(hobbyVO);
 
 		System.out.println("memberVO " + memberVO);
+		System.out.println("hobbyVO" + hobbyVO);
 
 		String action = memberVO.getAction();
 		String result = switch (action) {

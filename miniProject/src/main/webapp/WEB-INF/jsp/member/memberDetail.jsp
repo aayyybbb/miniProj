@@ -28,7 +28,7 @@
       <label>이름: ${memberDetail.name}</label><br/>
       <label>주소: ${memberDetail.addr}</label><br/>
       <label>연락처: ${memberDetail.phone}</label><br/>
-      <label>취미: ${memberDetail.hobby}</label><br/>
+      <label>취미: ${memberDetail.hobbyVO.hobby}</label><br/>
 
 <script type="text/javascript" src="<c:url value='/js/common.js'/>"></script>
 <script>

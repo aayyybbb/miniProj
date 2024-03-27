@@ -1,7 +1,6 @@
 package member;
 
-import java.util.List;
-
+import hobby.HobbyVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +17,7 @@ public class MemberVO {
 	private String phone;
 	private String gender;
 
-	private String hobby;
-	private List<String> hobbies;
+	private HobbyVO hobbyVO;
 	private String action;
 	private String searchKey;
 
@@ -37,7 +35,7 @@ public class MemberVO {
 		return searchKey == null || searchKey.length() == 0;
 	}
 
-	public MemberVO(String id, String pwd, String name, String addr, String phone, String gender, String hobby) {
+	public MemberVO(String id, String pwd, String name, String addr, String phone, String gender, HobbyVO hobbyVO) {
 		super();
 		this.id = id;
 		this.pwd = pwd;
@@ -45,7 +43,7 @@ public class MemberVO {
 		this.addr = addr;
 		this.phone = phone;
 		this.gender = gender;
-		this.hobby = hobby;
+		this.hobbyVO = hobbyVO;
 	}
 
 }
