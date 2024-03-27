@@ -1,5 +1,6 @@
 package member;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hobby.HobbyVO;
 
@@ -71,34 +75,69 @@ public class MemberServlet extends HttpServlet {
 
 		request.setCharacterEncoding("utf-8");
 		List<String> list = new ArrayList<>();
-
+		String contentType = request.getContentType();
 		MemberVO memberVO = new MemberVO();
 		HobbyVO hobbyVO = new HobbyVO();
+		if (contentType == null || contentType.startsWith("application/x-www-form-urlencoded")) {
 
-		memberVO.setId(request.getParameter("id"));
-		memberVO.setPwd(request.getParameter("pwd"));
-		memberVO.setName(request.getParameter("name"));
-		memberVO.setAddr(request.getParameter("addr"));
-		memberVO.setPhone(request.getParameter("phone"));
-		memberVO.setGender(request.getParameter("gender"));
-		memberVO.setAction(request.getParameter("action"));
-		memberVO.setSearchKey(request.getParameter("searchKey"));
+			memberVO.setId(request.getParameter("id"));
+			memberVO.setPwd(request.getParameter("pwd"));
+			memberVO.setName(request.getParameter("name"));
+			memberVO.setAddr(request.getParameter("addr"));
+			memberVO.setPhone(request.getParameter("phone"));
+			memberVO.setGender(request.getParameter("gender"));
+			memberVO.setAction(request.getParameter("action"));
+			memberVO.setSearchKey(request.getParameter("searchKey"));
 
-		String[] hList = request.getParameterValues("hobby");
-		if (hList != null) {
-			for (String h : hList) {
-				list.add(h);
+			String[] hList = request.getParameterValues("hobby");
+			if (hList != null) {
+				for (String h : hList) {
+					list.add(h);
+				}
 			}
+
+			hobbyVO.setHobbyId(list);
+			memberVO.setHobbyVO(hobbyVO);
+
+			System.out.println("memberVO " + memberVO);
+			System.out.println("hobbyVO" + hobbyVO);
+
+		} else if (contentType.startsWith("application/json")) {
+			BufferedReader reader = request.getReader();
+			StringBuilder jsonBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				jsonBuilder.append(line);
+			}
+			String json = jsonBuilder.toString();
+			// ObjectMapper를 사용하여 JSON 문자열을 JsonNode로 변환
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = mapper.readTree(json);
+
+			// 취미 목록 추출
+			JsonNode hobbyNode = rootNode.has("hobby") ? rootNode.get("hobby") : null;
+			List<String> hobbyList = new ArrayList<>();
+			if (hobbyNode != null && hobbyNode.isArray()) {
+				for (JsonNode hobby : hobbyNode) {
+					hobbyList.add(hobby.asText());
+				}
+				memberVO.getHobbyVO().setHobbyId(hobbyList);
+			}
+
+			// MemberVO 객체 생성 및 설정
+			memberVO.setId(rootNode.get("id").asText());
+			memberVO.setPwd(rootNode.has("pwd") ? rootNode.get("pwd").asText() : null);
+			memberVO.setName(rootNode.has("name") ? rootNode.get("name").asText() : null);
+			memberVO.setAddr(rootNode.has("addr") ? rootNode.get("addr").asText() : null);
+			memberVO.setPhone(rootNode.has("phone") ? rootNode.get("phone").asText() : null);
+			memberVO.setGender(rootNode.has("gender") ? rootNode.get("gender").asText() : null);
+			memberVO.setAction(rootNode.has("action") ? rootNode.get("action").asText() : null);
+			memberVO.setSearchKey(rootNode.has("searchKey") ? rootNode.get("searchKey").asText() : null);
+			// 받아온 MemberVO 객체를 이용하여 다른 작업 수행
 		}
 
-		hobbyVO.setHobbyId(list);
-		memberVO.setHobbyVO(hobbyVO);
-
-		System.out.println("memberVO " + memberVO);
-		System.out.println("hobbyVO" + hobbyVO);
-
 		String action = memberVO.getAction();
-		String result = switch (action) {
+		Object result = switch (action) {
 		case "list" -> memberController.list(request, memberVO);
 		case "view" -> memberController.read(request, memberVO);
 		case "signUp" -> memberController.signUp(request);
@@ -108,20 +147,20 @@ public class MemberServlet extends HttpServlet {
 		case "updateForm" -> memberController.updateForm(request, memberVO);
 		default -> "";
 		};
-
-		if (result.startsWith("redirect:")) {
-			// 리다이렉트
-			response.sendRedirect(result.substring("redirect:".length()));
-		} else if (result.startsWith("{") || result.startsWith("[")) {
-			// json 문자열을 리턴
+		if (result instanceof Integer && (Integer) result == 1) {
 			response.setContentType("application/json;charset=UTF-8");
-			response.getWriter().append(result);
-		} else {
-			// 3. jsp 포워딩
-			// 포워딩
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/member/" + result + ".jsp");
-			rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().write("{\"status\": 0}");
+		} else if (result instanceof String url) {
+			if (url.startsWith("redirect:")) {
+				// 리다이렉트
+				response.sendRedirect(url.substring("redirect:".length()));
+			} else {
+				// 3. jsp 포워딩
+				// 포워딩
+				RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/member/" + result + ".jsp");
+				rd.forward(request, response);
+			}
 		}
 	}
-
 }

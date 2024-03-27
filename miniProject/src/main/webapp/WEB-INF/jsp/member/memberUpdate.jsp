@@ -26,13 +26,26 @@
     <input type="checkbox" id="hobby4" name="hobby" value="4"> <label for="hobby4">Painting</label><br>
     <input type="checkbox" id="hobby5" name="hobby" value="5"> <label for="hobby5">Gardening</label><br>
     <div>
-        <input type="submit" value="수정">
+		<input type="button" value="수정" onclick="jsUpdate(${memberUpdate.id})">
         <a href="member.do?action=view&id=${memberUpdate.id}">취소</a>
     </div>
 </form>
 
 <script>
-
+function jsUpdate(memberId) {
+	if (confirm("정말로 수정하시겠습니까?")) {
+		action.value = "update";
+		ybFetch("member.do", "rForm", json => {
+			if(json.status == 0) {
+				//성공
+				alert("회원정보를 수정 하였습니다");
+				location = "member.do?action=view&id=" + memberId;
+			} else {
+				alert(json.statusMessage);
+			}
+		});
+	}
+}
 </script>
 </body>
 </html>

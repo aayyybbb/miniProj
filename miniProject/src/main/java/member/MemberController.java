@@ -30,34 +30,32 @@ public class MemberController {
 		return "signUp";
 	}
 
-	public String insert(HttpServletRequest request, MemberVO memberVO) {
+	public int insert(HttpServletRequest request, MemberVO memberVO) {
 		int memberUpdated = memberService.insert(memberVO);
 		int hobbyUpdated = hobbyService.insert(memberVO);
 		if (memberUpdated != 0 && hobbyUpdated != 0) {
-			return "memberList";
+			return 1;
 		} else {
-			return "signUp";
+			return 0;
 		}
 	}
 
-	public String update(HttpServletRequest request, MemberVO memberVO) {
+	public int update(HttpServletRequest request, MemberVO memberVO) {
 		int memberUpdated = memberService.update(memberVO);
 		int hobbyUpdated = hobbyService.update(memberVO);
 		if (memberUpdated != 0 && hobbyUpdated != 0) {
-			MemberVO member = memberService.read(memberVO);
-			request.setAttribute("memberDetail", member);
-			return "memberDetail";
+			return 1;
 		}
-		return "memberUpdate";
+		return 0;
 	}
 
-	public String delete(HttpServletRequest request, MemberVO memberVO) {
+	public int delete(HttpServletRequest request, MemberVO memberVO) {
 		int updated = memberService.delete(memberVO);
 		if (updated != 0) {
-			return "memberList";
+			return 1;
 		} else {
 			request.setAttribute("memberUpdate", memberVO);
-			return "memberUpdate";
+			return 0;
 		}
 	}
 
