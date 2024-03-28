@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import hobby.HobbyService;
+import hobby.HobbyVO;
 
 public class MemberController {
 	MemberService memberService = new MemberService();
@@ -27,6 +28,8 @@ public class MemberController {
 	}
 
 	public String signUp(HttpServletRequest request) {
+		List<HobbyVO> list = hobbyService.list();
+		request.setAttribute("hobby", list);
 		return "signUp";
 	}
 
@@ -61,7 +64,11 @@ public class MemberController {
 
 	public String updateForm(HttpServletRequest request, MemberVO memberVO) {
 		MemberVO member = memberService.read(memberVO);
+		List<HobbyVO> list = hobbyService.list();
+		List<HobbyVO> selectedList = hobbyService.selectedList(memberVO);
 		request.setAttribute("memberUpdate", member);
+		request.setAttribute("hobbyList", selectedList);
+		request.setAttribute("hobby", list);
 		return "memberUpdate";
 	}
 

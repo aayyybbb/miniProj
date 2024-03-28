@@ -1,5 +1,7 @@
 package member;
 
+import java.util.List;
+
 import hobby.HobbyVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +18,8 @@ public class MemberVO {
 	private String addr;
 	private String phone;
 	private String gender;
-
 	private HobbyVO hobbyVO;
+	private List<HobbyVO> hobbyVOList;
 	private String action;
 	private String searchKey;
 

@@ -1,5 +1,7 @@
 package hobby;
 
+import java.util.List;
+
 import member.MemberVO;
 
 public class HobbyService {
@@ -14,9 +16,17 @@ public class HobbyService {
 	}
 
 	public int update(MemberVO memberVO) {
-		if (memberVO.getHobbyVO().getHobbyId() != null) {
+		if (memberVO.getHobbyVO() != null) {
 			delete(memberVO);
 		}
 		return insert(memberVO);
+	}
+
+	public List<HobbyVO> list() {
+		return hobbyDAO.hobbyList();
+	}
+	
+	public List<HobbyVO> selectedList(MemberVO memberVO){
+		return hobbyDAO.memberHobbyDetail(memberVO);
 	}
 }

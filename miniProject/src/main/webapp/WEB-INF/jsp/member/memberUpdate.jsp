@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,36 +19,42 @@
     <label>이름:</label> <input type="text" id="name" name="name" value="${memberUpdate.name}" required="required"><br>
     <label>주소:</label> <input type="text" id="addr" name="addr" value="${memberUpdate.addr}" required="required"><br>
     <label>연락처:</label> <input type="text" id="phone" name="phone" value="${memberUpdate.phone}" required="required"><br>
-    <label>성별:</label> 
-    <input type="radio" id="male" name="gender" value="male"> <label for="male">남성</label>
-    <input type="radio" id="female" name="gender" value="female"> <label for="female">여성</label><br>
-    <label>취미:</label><br>
-    <input type="checkbox" id="hobby1" name="hobby" value="1"> <label for="hobby1">Reading</label><br>
-    <input type="checkbox" id="hobby2" name="hobby" value="2"> <label for="hobby2">Soccer</label><br>
-    <input type="checkbox" id="hobby3" name="hobby" value="3"> <label for="hobby3">Cooking</label><br>
-    <input type="checkbox" id="hobby4" name="hobby" value="4"> <label for="hobby4">Painting</label><br>
-    <input type="checkbox" id="hobby5" name="hobby" value="5"> <label for="hobby5">Gardening</label><br>
+<label>성별:</label> 
+<input type="radio" id="male" name="gender" value="male" ${memberUpdate.gender eq 'male' ? 'checked' : ''}> <label for="male">남성</label>
+<input type="radio" id="female" name="gender" value="female" ${memberUpdate.gender eq 'female' ? 'checked' : ''}> <label for="female">여성</label><br>
+  <label>취미:</label><br>
+<c:forEach var="hobby" items="${hobby}">
+    <c:set var="isChecked" value="false"/>
+    <c:forEach var="hobbyList" items="${hobbyList}">
+        <c:if test="${hobbyList.hobby eq hobby.hobby}">
+            <c:set var="isChecked" value="true"/>
+        </c:if>
+    </c:forEach>
+    <input type="checkbox" id="${hobby.hobbyId}" name="hobby" value="${hobby.hobbyId}" ${isChecked ? 'checked' : ''}>
+    <label for="${hobby.hobbyId}">${hobby.hobby}</label><br>
+</c:forEach>
     <div>
-		<input type="button" value="수정" onclick="jsUpdate(${memberUpdate.id})">
+		<input type="button" value="수정" onclick="jsUpdate()">
         <a href="member.do?action=view&id=${memberUpdate.id}">취소</a>
     </div>
 </form>
 
+<script type="text/javascript" src="<c:url value='/js/common.js'/>"></script>
 <script>
-function jsUpdate(memberId) {
+function jsUpdate() {
+	
 	if (confirm("정말로 수정하시겠습니까?")) {
-		action.value = "update";
 		ybFetch("member.do", "rForm", json => {
 			if(json.status == 0) {
 				//성공
 				alert("회원정보를 수정 하였습니다");
-				location = "member.do?action=view&id=" + memberId;
+				location = "member.do?action=view&id=" + id.value;
 			} else {
 				alert(json.statusMessage);
 			}
 		});
 	}
 }
-</script>
+ </script>
 </body>
 </html>

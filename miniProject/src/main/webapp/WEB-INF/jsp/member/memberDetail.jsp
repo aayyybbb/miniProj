@@ -28,7 +28,8 @@
       <label>이름: ${memberDetail.name}</label><br/>
       <label>주소: ${memberDetail.addr}</label><br/>
       <label>연락처: ${memberDetail.phone}</label><br/>
-      <label>취미: ${memberDetail.hobbyVO.hobby}</label><br/>
+      <label>성별: ${memberDetail.gender}</label><br/>
+      <label>취미: ${memberDetail.hobbyVO.hobby}</label>
 
 <!-- 두개의 폼을 하나로 합치는 방법 , js를 사용하여 처리  -->
 	<form id="viewForm" method="post" action="member.do">

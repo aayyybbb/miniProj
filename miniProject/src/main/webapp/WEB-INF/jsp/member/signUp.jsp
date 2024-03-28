@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,18 +20,16 @@
     <label>성별:</label> 
     <input type="radio" id="male" name="gender" value="male"> <label for="male">남성</label>
     <input type="radio" id="female" name="gender" value="female"> <label for="female">여성</label><br>
-    <label>취미:</label><br>
-    <input type="checkbox" id="hobby1" name="hobby" value="1"> <label for="hobby1">Reading</label><br>
-    <input type="checkbox" id="hobby2" name="hobby" value="2"> <label for="hobby2">Soccer</label><br>
-    <input type="checkbox" id="hobby3" name="hobby" value="3"> <label for="hobby3">Cooking</label><br>
-    <input type="checkbox" id="hobby4" name="hobby" value="4"> <label for="hobby4">Painting</label><br>
-    <input type="checkbox" id="hobby5" name="hobby" value="5"> <label for="hobby5">Gardening</label><br>
+<label>취미:</label><br>
+<c:forEach var="hobby" items="${hobby}">
+    <input type="checkbox" id="${hobby.hobbyId}" name="hobby" value="${hobby.hobbyId}">
+    <label for="${hobby.hobbyId}">${hobby.hobby}</label><br>
+</c:forEach>
   <div>
         <input type="submit" value="회원가입">
         <input type="button" value="돌아가기" onclick="member.do?action=list">
     </div>
 </form>
-
 <script>
 
 </script>

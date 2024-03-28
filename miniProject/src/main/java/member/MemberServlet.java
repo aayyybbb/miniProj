@@ -96,11 +96,8 @@ public class MemberServlet extends HttpServlet {
 				}
 			}
 
-			hobbyVO.setHobbyId(list);
+			hobbyVO.setHobbyIdList(list);
 			memberVO.setHobbyVO(hobbyVO);
-
-			System.out.println("memberVO " + memberVO);
-			System.out.println("hobbyVO" + hobbyVO);
 
 		} else if (contentType.startsWith("application/json")) {
 			BufferedReader reader = request.getReader();
@@ -120,10 +117,11 @@ public class MemberServlet extends HttpServlet {
 			if (hobbyNode != null && hobbyNode.isArray()) {
 				for (JsonNode hobby : hobbyNode) {
 					hobbyList.add(hobby.asText());
+					System.out.println(hobby.asText());
 				}
-				memberVO.getHobbyVO().setHobbyId(hobbyList);
+				hobbyVO.setHobbyIdList(hobbyList);
 			}
-
+			memberVO.setHobbyVO(hobbyVO);
 			// MemberVO 객체 생성 및 설정
 			memberVO.setId(rootNode.get("id").asText());
 			memberVO.setPwd(rootNode.has("pwd") ? rootNode.get("pwd").asText() : null);
@@ -137,6 +135,7 @@ public class MemberServlet extends HttpServlet {
 		}
 
 		String action = memberVO.getAction();
+		System.out.println(action);
 		Object result = switch (action) {
 		case "list" -> memberController.list(request, memberVO);
 		case "view" -> memberController.read(request, memberVO);

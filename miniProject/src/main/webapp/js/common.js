@@ -2,33 +2,31 @@
  * 
  */
 
-const formToSerialize = (formId) => JSON.stringify([].reduce.call(document.querySelector('#' + formId), (data, element) => {
-	   //이름이 있는 것을 대상으로함 
-	    console.log(element);
-	    if (element.name == '') return data;
-	    //radio와 checkbox인 경우는 반드시 선택된 것만 대상으로함 
-	    if (element.type == 'radio' || element.type == 'checkbox') {
-	        if (element.checked) {
-	           if (typeof data[element.name] == 'undefined') {
-	              //문자열 1건 추가  
-	                data[element.name] = element.value;
-	           } else if(typeof data[element.name] == 'string') {
-	              //문자열 값을 배열로 변경 
-	              data[element.name] = [data[element.name], element.value]; 
-	           } else if(typeof data[element.name] == 'object') {
-	              //배열에 문자열 값을 추가  
-	              data[element.name].push(element.value);
-	           }
-	        }
-	     } else {
-	        //그외는 모두 대상으로 함 
-	        data[element.name] = element.value;
-	     }
-	     return data;
-	    },
-	    {} //초기값 
-	 )
-);
+const formToSerialize = (formId) => {
+    const formData = {};
+    const form = document.querySelector('#' + formId);
+    const formElements = form.elements;
+
+    for (let i = 0; i < formElements.length; i++) {
+        const element = formElements[i];
+
+        if (element.name === '') continue;
+
+        if (element.type === 'radio' || element.type === 'checkbox') {
+            if (element.checked) {
+                if (!formData[element.name]) {
+                    formData[element.name] = [];
+                }
+                formData[element.name].push(element.value);
+            }
+        } else {
+            formData[element.name] = element.value;
+        }
+    }
+
+    return JSON.stringify(formData);
+};
+
 /*
 url : 서버의 주소
 formId : formId 또는 json 연관배열

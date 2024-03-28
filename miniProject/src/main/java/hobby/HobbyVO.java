@@ -10,6 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HobbyVO {
+	public HobbyVO(String hobby, String hobbyId) {
+		this.hobby = hobby;
+		this.hobbyId = hobbyId;
+	}
+
 	private String hobby;
-	private List<String> hobbyId;
+	private String hobbyId;
+
+	private List<String> hobbyIdList;
+
 }
