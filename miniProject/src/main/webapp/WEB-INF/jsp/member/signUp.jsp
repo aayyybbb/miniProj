@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<body>
+<body>	
 회원가입 페이지
 
     <form id="rForm" action="member.do" method="post">
@@ -26,12 +26,23 @@
     <label for="${hobby.hobbyId}">${hobby.hobby}</label><br>
 </c:forEach>
   <div>
-        <input type="submit" value="회원가입">
+       	<input type="button" value="회원가입" onclick="jsSignUp()">	
         <input type="button" value="돌아가기" onclick="member.do?action=list">
     </div>
 </form>
+<script type="text/javascript" src="<c:url value='/js/common.js'/>"></script>
 <script>
-
-</script>
+function jsSignUp() {
+		ybFetch("member.do", "rForm", json => {
+			if(json.status == 0) {
+				//성공
+				alert("회원가입되었습니다.");
+				location = "member.do?action=view&id=" + id.value;
+			} else {
+				alert(json.statusMessage);
+			}
+		});
+}
+ </script>
 </body>
 </html>

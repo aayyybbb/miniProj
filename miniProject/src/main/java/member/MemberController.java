@@ -1,8 +1,11 @@
 package member;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import hobby.HobbyService;
 import hobby.HobbyVO;
@@ -70,6 +73,22 @@ public class MemberController {
 		request.setAttribute("hobbyList", selectedList);
 		request.setAttribute("hobby", list);
 		return "memberUpdate";
+	}
+
+	public String loginForm(HttpServletRequest request) {
+		return "loginForm";
+	}
+
+	public int login(HttpServletRequest request, MemberVO memberVO) throws ServletException, IOException {
+		MemberVO loginVO = memberService.read(memberVO);
+		if (memberVO.getPwd() == loginVO.getPwd()) {
+			HttpSession session = request.getSession();
+			System.out.println("login session id = " + session.getId());
+			session.setAttribute("loginVO", loginVO);
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 }

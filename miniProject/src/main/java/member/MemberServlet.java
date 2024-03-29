@@ -88,6 +88,7 @@ public class MemberServlet extends HttpServlet {
 			memberVO.setGender(request.getParameter("gender"));
 			memberVO.setAction(request.getParameter("action"));
 			memberVO.setSearchKey(request.getParameter("searchKey"));
+			System.out.println(memberVO.getGender());
 
 			String[] hList = request.getParameterValues("hobby");
 			if (hList != null) {
@@ -117,7 +118,6 @@ public class MemberServlet extends HttpServlet {
 			if (hobbyNode != null && hobbyNode.isArray()) {
 				for (JsonNode hobby : hobbyNode) {
 					hobbyList.add(hobby.asText());
-					System.out.println(hobby.asText());
 				}
 				hobbyVO.setHobbyIdList(hobbyList);
 			}
@@ -136,6 +136,7 @@ public class MemberServlet extends HttpServlet {
 
 		String action = memberVO.getAction();
 		System.out.println(action);
+		System.out.println(memberVO.getGender());
 		Object result = switch (action) {
 		case "list" -> memberController.list(request, memberVO);
 		case "view" -> memberController.read(request, memberVO);
@@ -144,6 +145,8 @@ public class MemberServlet extends HttpServlet {
 		case "update" -> memberController.update(request, memberVO);
 		case "delete" -> memberController.delete(request, memberVO);
 		case "updateForm" -> memberController.updateForm(request, memberVO);
+		case "loginForm" -> memberController.loginForm(request);
+		case "login" -> memberController.login(request, memberVO);
 		default -> "";
 		};
 		if (result instanceof Integer && (Integer) result == 1) {
