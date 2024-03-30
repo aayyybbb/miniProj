@@ -42,8 +42,6 @@
 <script type="text/javascript" src="<c:url value='/js/common.js'/>"></script>
 <script>
 function jsUpdate() {
-	
-	if (confirm("정말로 수정하시겠습니까?")) {
 		ybFetch("member.do", "rForm", json => {
 			if(json.status == 0) {
 				//성공
@@ -54,7 +52,6 @@ function jsUpdate() {
 			}
 		});
 	}
-}
  </script>
 </body>
 </html>

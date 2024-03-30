@@ -85,6 +85,7 @@ public class MemberController {
 			HttpSession session = request.getSession();
 			System.out.println("login session id = " + session.getId());
 			session.setAttribute("loginVO", loginVO);
+
 			return 1;
 		} else {
 			return 0;
