@@ -16,6 +16,15 @@ public class BoardVO {
 		this.writer = writer;
 	}
 
+	public BoardVO(String id, String title, String content, String name, String date, int viewCount) {
+		this.id = id;
+		this.title = title;
+		this.content = content;
+		this.writer = name;
+		this.date = date;
+		this.viewCount = viewCount;
+	}
+
 	private String id;
 	private String title;
 	private String content;

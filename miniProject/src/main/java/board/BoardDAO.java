@@ -24,6 +24,7 @@ public class BoardDAO {
 	private static PreparedStatement boardWriterPstmt = null;
 	private static PreparedStatement boardUpdatePstmt = null;
 	private static PreparedStatement boardDeleteAllPstmt = null;
+	private static PreparedStatement viewCountUpdatePstmt = null;
 
 	static {
 
@@ -43,6 +44,7 @@ public class BoardDAO {
 			boardWriterPstmt = conn.prepareStatement(
 					"select m.name from tb_member m join tb_board b on m.member_id = b.member_id where b.member_id = ? ");
 			boardUpdatePstmt = conn.prepareStatement("update tb_board set title = ?, content = ? where board_id = ?");
+			viewCountUpdatePstmt = conn.prepareStatement("update tb_board set viewcount = ? where board_id = ?");
 			// 5. 결과 처리
 			// 6. 연결 해제
 		} catch (ClassNotFoundException e) {
@@ -107,8 +109,9 @@ public class BoardDAO {
 			ResultSet wrs = boardWriterPstmt.executeQuery();
 			ResultSet rs = boardDetailPstmt.executeQuery();
 			if (wrs.next() && rs.next()) {
-				board = new BoardVO(rs.getString("id"), rs.getString("title"), rs.getString("content"),
-						wrs.getString("name"), rs.getString("date"));
+				board = new BoardVO(rs.getString("board_id"), rs.getString("title"), rs.getString("content"),
+						wrs.getString("name"), rs.getString("date"), rs.getInt("viewCount") + 1);
+				updateViewCount(board);
 			}
 			wrs.close();
 			rs.close();
@@ -158,4 +161,15 @@ public class BoardDAO {
 		return updated;
 	}
 
+	public void updateViewCount(BoardVO boardVO) {
+		try {
+			viewCountUpdatePstmt.setInt(1, boardVO.getViewCount());
+			viewCountUpdatePstmt.setString(2, boardVO.getId());
+			viewCountUpdatePstmt.executeUpdate();
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

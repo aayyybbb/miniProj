@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>게시물 상세보기</title>
+    <title>나의페이지</title>
     <style>
         label {
             display: inline-block;
@@ -20,26 +20,27 @@
 </head>
 <body>
     <h1>
-        게시물 상세보기
+       나의페이지
     </h1>
    
-      <label>게시물 번호: ${board.id}</label> <br/>
-      <label>제목 : ${board.title}</label><br/>
-      <label>내용 : ${board.content}</label><br/>
-      <label>작성자 : ${board.writer}</label><br/>
-      <label>작성일 : ${board.date}</label><br/>
-      <label>조회수 : ${board.viewCount}</label><br/>
+      <label>아이디 : ${loginVO.id}</label> <br/>
+      <label>비밀번호 : ${loginVO.pwd}</label><br/>
+      <label>이름: ${loginVO.name}</label><br/>
+      <label>주소: ${loginVO.addr}</label><br/>
+      <label>연락처: ${loginVO.phone}</label><br/>
+      <label>성별: ${loginVO.gender}</label><br/>
+      <label>취미: ${loginVO.hobbyVO.hobby}</label>
 
 <script type="text/javascript" src="<c:url value='/js/common.js'/>"></script>
 <script>
 function jsDelete() {
-	if (confirm("정말로 삭제하시겠습니까?")) {
+	if (confirm("정말로 탈퇴하시겠습니까?")) {
 		action.value = "delete";
-		ybFetch("board.do", "viewForm", json => {
+		myFetch("member.do", "viewForm", json => {
 			if(json.status == 0) {
 				//성공
-				alert("게시물 정보를 삭제 하였습니다");
-				location = "board.do?action=list";
+				alert("회원정보를 삭제 하였습니다");
+				location = "user.do?action=list";
 			} else {
 				alert(json.statusMessage);
 			}
@@ -56,20 +57,16 @@ function jsUpdateForm() {
 		viewForm.submit();
 	}	
 }
+
 </script>
 <!-- 두개의 폼을 하나로 합치는 방법 , js를 사용하여 처리  -->
-	<form id="viewForm" method="post" action="board.do">
+	<form id="viewForm" method="post" action="member">
 		<input type="hidden" id="action" name="action" value="">
-		<input type="hidden" name="id" value="${board.id}">
+		<input type="hidden" id="id" name="id" value="${loginVO.id}">
 		<input type="button" value="삭제" onclick="jsDelete()">
 		<input type="button" value="수정" onclick="jsUpdateForm()">
 	</form>     
  
-    <div>
-        <a href="board.do?action=list">목록</a>
-        <a href="board.do?action=updateForm&id=${board.id}">수정</a>
-        <a href="board.do?action=delete&id=${board.id}">삭제</a>
-    </div>
 </body>
 </html>
 

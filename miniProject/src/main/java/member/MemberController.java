@@ -80,16 +80,39 @@ public class MemberController {
 	}
 
 	public int login(HttpServletRequest request, MemberVO memberVO) throws ServletException, IOException {
+		System.out.println("로그인");
+		System.out.println(memberVO.getPwd());
 		MemberVO loginVO = memberService.read(memberVO);
-		if (memberVO.getPwd() == loginVO.getPwd()) {
+		System.out.println(loginVO.getPwd());
+		if (memberVO.getPwd().equals(loginVO.getPwd())) {
 			HttpSession session = request.getSession();
 			System.out.println("login session id = " + session.getId());
 			session.setAttribute("loginVO", loginVO);
-
 			return 1;
 		} else {
 			return 0;
 		}
+	}
+
+	public String logout(HttpServletRequest request) {
+
+		// 로그인 사용자의 정보를 세션에 제거한다
+		HttpSession session = request.getSession();
+		System.out.println("logout session id = " + session.getId());
+		session.removeAttribute("loginVO"); // 특정 이름을 제거한다
+		session.invalidate(); // 세션에 저장된 모든 자료를 삭제한다
+		return "loginForm";
+	}
+
+	public String mypage(HttpServletRequest request) throws ServletException, IOException {
+		System.out.println("상세보기");
+		HttpSession session = request.getSession();
+		MemberVO loginVO = (MemberVO) session.getAttribute("loginVO");
+		if (loginVO == null) {
+			return "redirect:member.do?action=loginForm";
+		}
+		request.setAttribute("loginVO", loginVO);
+		return "mypage";
 	}
 
 }

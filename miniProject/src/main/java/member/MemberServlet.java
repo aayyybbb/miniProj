@@ -147,9 +147,12 @@ public class MemberServlet extends HttpServlet {
 		case "updateForm" -> memberController.updateForm(request, memberVO);
 		case "loginForm" -> memberController.loginForm(request);
 		case "login" -> memberController.login(request, memberVO);
+		case "logout" -> memberController.logout(request);
+		case "mypage" -> memberController.mypage(request);
 		default -> "";
 		};
 		if (result instanceof Integer && (Integer) result == 1) {
+			System.out.println(result);
 			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.getWriter().write("{\"status\": 0}");

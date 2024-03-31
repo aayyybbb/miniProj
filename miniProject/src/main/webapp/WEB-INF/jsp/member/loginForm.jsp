@@ -25,7 +25,7 @@
         <label>아이디 : </label> <input type="text" id="id" name="id" required="required"><br/>
         <label>비밀번호 : </label>   <input type="password" id="pwd" name="pwd" required="required"><br/>
     <div>
-        <input type="submit" value="로그인" >
+        <input type="submit" value="로그인">
         <a href="member.do?action=list">취소</a>
     </div>
     
@@ -41,7 +41,7 @@
     	//서버에 form data를 전송하지 않는다 
     	e.preventDefault();
     	
-		myFetch("member.do", "rForm", json => {
+		ybFetch("member.do", "rForm", json => {
 			if(json.status == 0) {
 				//성공
 				alert("로그인 되었습니다");
@@ -51,6 +51,7 @@
 			}
 		});
     });
+   
     
     </script>
     
